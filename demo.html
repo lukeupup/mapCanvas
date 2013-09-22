@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <div class="test"></div>
+  <script type="text/javascript" src="libs/jquery/jquery.js"></script>
+  <script type="text/javascript" src="libs/raphael.js"></script>
+  <script type="text/javascript" src="src/jquery.mapCanvas.js"></script>
+  <script type="text/javascript">
+  $.getJSON('src/chinamap.json', function(data){
+    $('.test').mapCanvas(data, {
+      zoom: 1.2,
+      fontFamily: '"Microsoft YaHei"',
+      onClickArea: function(area){
+        area.area.animate({'fill': 'green'}, 100);
+      }
+    });
+  });
+  </script>
+</body>
+</html>
