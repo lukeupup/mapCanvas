@@ -152,12 +152,12 @@
     return me;
   };
 
-  Area.data = function(){
+  Area.prototype.data = function(){
     var me = this,
         $path = $(me.path.node);
     return $path.data.apply($path, arguments);
   };
-  Area.removeData = function(){
+  Area.prototype.removeData = function(){
     var me = this,
         $path = $(me.path.node);
     return $path.removeData.apply($path, arguments);
