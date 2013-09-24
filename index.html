@@ -4,9 +4,39 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="mapCanvas : SVG China map based on Raphaël and jQuery " />
+    <meta name="description" content="mapCanvas : SVG China map based on Raphaël and jQuery 基于jQuery和Raphaël的中国地图" />
+    <meta name="keywords" content="SVG, Raphael, Raphaël, China Map, jQuery Plugin, 中国地图, html5, VML, canvas, 矢量地图" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <style type="text/css">
+    #map-ctnr {
+      background: #FFF;
+      overflow: hidden;
+      border: 1px solid #DDD;
+      padding: 30px;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.2);
+      border-radius: 4px;
+    }
+    #main_content > * {
+      margin: 30px 0;
+    }
+    #demo-console {
+      height: 15px;
+      font-size: 12px;
+      color: #666;
+    }
+    #demo-console b {
+      font-weight: bold;
+    }
+    #demo-code {
+      width: auto;
+      border: 1px solid #DDD;
+      padding: 30px;
+      background: #FFF;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.2);
+      border-radius: 4px;
+    }
+    </style>
 
     <title>mapCanvas</title>
   </head>
@@ -19,7 +49,7 @@
           <a id="forkme_banner" href="https://github.com/lukeupup/mapCanvas">View on GitHub</a>
 
           <h1 id="project_title">mapCanvas</h1>
-          <h2 id="project_tagline">SVG China map based on Raphaël and jQuery </h2>
+          <h2 id="project_tagline">基于jQuery和Raphaël的中国地图</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/lukeupup/mapCanvas/zipball/master">Download this project as a .zip file</a>
@@ -31,7 +61,45 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p>基于jQuery和Raphaël的中国地图</p>
+        <h3>Demo</h3>
+        <div id="map-ctnr">
+          <div id="demo-console"></div>
+          <div id="demo-map"></div>
+        </div>
+        <h3>Demo Code</h3>
+        <pre id="demo-code">$(function(){
+  var $map     = $('#demo-map'),
+      $console = $('#demo-console');
+  $.getJSON('javascripts/chinamap.json', function(data){
+    $map.mapCanvas(data, {
+      bubble: function(area){
+        var hints = [
+          '可以自定义bubble内容哦',
+          '点我试试'
+        ],
+        i = Math.random() &gt; 0.5 ? 1 : 0;
+        return area.name + '&lt;br&gt;' + '&lt;small&gt;' + hints[i] + '&lt;/small&gt;';
+      },
+      onAreaClick: function(){
+        var me = this;
+        if (!me.data('hilight')) {
+          me.setFillColor('#BCF');
+          me.data('hilight', true);
+          $console.html('你去过了&lt;b&gt;' + me.name + '&lt;/b&gt;');
+        }
+        else {
+          me.setFillColor();
+          me.data('hilight', false);
+          $console.html('你没去过&lt;b&gt;' + me.name + '&lt;/b&gt;');
+        }
+      }
+    });
+  });
+});</pre>
+        <h3>Documentation, Source Code, Issues</h3>
+        <p>
+          <a href="https://github.com/lukeupup/mapCanvas">View on github.</a>
+        </p>
       </section>
     </div>
 
@@ -43,7 +111,17 @@
       </footer>
     </div>
 
-    
+    <script type="text/javascript" src="javascripts/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/raphael-min.js"></script>
+    <script type="text/javascript" src="javascripts/jquery.mapCanvas.min.js"></script>
 
+    <script type="text/javascript">
+    $(function(){
+      var $code = $('#demo-code');
+      var script = document.createElement('script');
+      $(script).text($code.text());
+      $("body").append(script);
+    });
+    </script>
   </body>
 </html>
