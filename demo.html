@@ -11,11 +11,9 @@
   <script type="text/javascript">
   $.getJSON('src/chinamap.json', function(data){
     $('.test').mapCanvas(data, {
-      // zoom: 1.2,
+      zoom: 1.5,
       fontFamily: '"Microsoft YaHei"',
-      bubble: function(name){
-        return name + '<br>' + Math.random();
-      }
+      bubble: null,
     });
   });
   </script>

@@ -1,5 +1,5 @@
 {
-  "name": "mapCanvas",
+  "name": "jquery.mapCanvas",
   "title": "Map Canvas",
   "description": "SVG China map based on Raphaël and jQuery",
   "version": "0.1.0",
