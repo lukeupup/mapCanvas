@@ -189,7 +189,7 @@
 
     $.each(areas, function(i, area){
       area.on('mouseenter', function(e){
-        $bubble.html(option.bubble(area.name)).css({
+        $bubble.html(option.bubble(area)).css({
           top:  (e.pageY) + option.bubbleOffset.y,
           left: (e.pageX) + option.bubbleOffset.x
         }).show();
@@ -211,8 +211,16 @@
     if (!data) {
       return this;
     }
+    if (data === 'areas') {
+      return $(this).data('mapCanvas.areas');
+    }
+    if (typeof data !== 'object') {
+      throw 'The first argument should be an object, or exactly "areas".';
+    }
     option = $.extend(true, {
-      zoom: 1,
+      width:          undefined,
+      height:         undefined,
+      zoom:           1,
       strokeColor:    '#AAA',
       strokeWidth:    1,
       strokeLinejoin: 'round',
@@ -248,6 +256,10 @@
       option.zoom = option.width / data.dimension.width;
       option.height = data.dimension.height * option.zoom;
     }
+    else if (option.height) {
+      option.zoom = option.height / data.dimension.height;
+      option.width = data.dimension.width * option.zoom;
+    }
     else {
       option.width = option.zoom * data.dimension.width;
       option.height = option.zoom * data.dimension.height;
@@ -276,6 +288,8 @@
         area.on('mouseleave', option.onAreaMouseleave);
         area.on('mousemove',  option.onAreaMousemove);
       });
+
+      $elem.data('mapCanvas.areas', map);
 
       if (option.onMapInit) {
         option.onMapInit();
