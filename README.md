@@ -5,6 +5,10 @@ SVG China map based on Raphaël and jQuery (also support other countries)
 
 基于jQuery和Raphaël的中国地图（亦可支持其他国家）
 
+# Demo
+
+[View on http://lukeupup.github.io/mapCanvas/](http://lukeupup.github.io/mapCanvas/)
+
 # Usage
 
 Example Code:
