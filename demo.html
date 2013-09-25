@@ -15,6 +15,22 @@
       zoom: 1.5,
       fontFamily: '"Microsoft YaHei"',
     });
+
+    var colors = {
+      '江苏': ['#F33', '#F44'],
+      '浙江': ['#F55', '#F66'],
+      '福建': ['#F77', '#F88'],
+      '广东': ['#F99', '#FAA'],
+      '山东': ['#FBB', '#FCC']
+    }
+    $.each($('.map').mapCanvas('areas'), function(i, area){
+      if (area.name in colors) {
+        area.setFillColor(colors[area.name][0], colors[area.name][1]);
+        if (area.name === '山东') {
+          area.setFillColor();
+        }
+      }
+    });
   });
   </script>
 </body>

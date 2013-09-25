@@ -87,15 +87,15 @@ Example Code:
 
 规定了气泡的样式。
 
-`onMapInit'`        默认为`$.noop`，规定了地图加载完成时的事件回调函数。
+`onMapInit`        默认为`$.noop`，规定了地图加载完成时的事件回调函数。
 
-`onAreaClick'`      默认为`$.noop`，规定了点击区块时的事件回调函数。
+`onAreaClick`      默认为`$.noop`，规定了点击区块时的事件回调函数。
 
-`onAreaMouseenter'` 默认为`$.noop`，规定了鼠标进入区块时的事件回调函数。
+`onAreaMouseenter` 默认为`$.noop`，规定了鼠标进入区块时的事件回调函数。
 
-`onAreaMouseleave'` 默认为`$.noop`，规定了鼠标移出区块时的事件回调函数。
+`onAreaMouseleave` 默认为`$.noop`，规定了鼠标移出区块时的事件回调函数。
 
-`onAreaMousemove'`  默认为`$.noop`，规定了鼠标在区块内移动时的事件回调函数。
+`onAreaMousemove`  默认为`$.noop`，规定了鼠标在区块内移动时的事件回调函数。
 
 ### 关于选项的几点注意事项
 
@@ -116,7 +116,7 @@ Example Code:
 
 ## <a name="area-object"></a>Area对象
 
-一个区块被封装成了一个Area对象。通过`bubble`，`onAreaXxx`等函数，可以访问Area对象。
+一个区块被封装成了一个Area对象。通过`bubble`，`onArea...`等函数，可以访问Area对象。
 
 另外，在已加载地图的jQuery对象上调用`mapCanvas('areas')`，可以获取地图中所有Area的列表：
 
@@ -146,7 +146,9 @@ Example Code:
 
 `removeData(key)`，         删除在Area上绑定的数据。
 
-`setFillColor([color])`，   给区块加背景色（不传入color，则恢复默认的背景色）。通过这个方法设置的背景色不会被鼠标hover事件干掉。
+`setFillColor([color] [,hoverColor])`，给区块加背景色。不传入color，则恢复默认的背景色。
+如果传入两个参数，第二个参数规定了区块被鼠标hover时的颜色。
+通过这个方法设置的背景色不会被鼠标hover事件干掉。
 
 
 ## <a name="customize-map-data"></a>如果你想自定义地图数据:
@@ -165,7 +167,7 @@ Example Code:
 	  "height": 500
 	}
 
-`paths`是一个数组，数组的每项元素记录了地图中一个区块（在这里也就是一个省）的**名称**和**形状**。`path`中一个元素的结构为：
+`paths`是一个数组，数组的每项元素记录了地图中一个区块（在这里也就是一个省）的*名称*和*形状*。`path`中一个元素的结构为：
 
 	{
 	  "name": "江苏",
@@ -181,7 +183,7 @@ Example Code:
 	  }
 	}
 
-`name`显然就是区块的名称，是一个字符串。`cmd`即为形状信息。它是一个数组。`offset`定义了显示区块名称时的偏移量，它是可选的。
+`name`就是区块的名称，是一个字符串。`cmd`即为形状信息。它是一个数组。`offset`定义了显示区块名称时的偏移量，它是可选的。
 
 `cmd`实际上是把[SVG路径字符串(SVG path string format)](http://www.w3.org/TR/SVG/paths.html#PathData)拆分成数组了。这样做的原因是为了便于计算缩放。比如原来写作`M0,0l1,0l0,1z`的path string转换成cmd即为：
 

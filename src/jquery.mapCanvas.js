@@ -26,7 +26,8 @@
         $container = $(canvas.canvas).parent();
 
     me._option = option;
-    me._forceColored = false;
+    me._forceColor = '';
+    me._forceHoverColor = '';
     me._eventHandlers = {};
     me._rawEventHandlers = {};
 
@@ -96,13 +97,21 @@
 
     // Make the path color changed when mouse hovering.
     me.on('mouseenter', function(){
-      if (!me._forceColored) {
+      if (!me._forceHoverColor) {
         me.path.animate({'fill': option.hoverFillColor}, 100);
         me.text.animate({'fill': option.hoverTextColor}, 100);
       }
+      else {
+        me.path.animate({'fill': me._forceHoverColor}, 100);
+        me.text.animate({'fill': option.hoverTextColor}, 100);
+      }
     }).on('mouseleave', function(){
-      if (!me._forceColored) {
+      if (!me._forceColor) {
         me.path.animate({'fill': option.fillColor}, 100);
+        me.text.animate({'fill': option.textColor}, 100);
+      }
+      else {
+        me.path.animate({'fill': me._forceColor}, 100);
         me.text.animate({'fill': option.textColor}, 100);
       }
     });
@@ -160,15 +169,17 @@
     return $path.removeData.apply($path, arguments);
   };
 
-  Area.prototype.setFillColor = function(color) {
+  Area.prototype.setFillColor = function(color, hoverColor) {
     var me = this;
     if (!color) {
       me.path.animate({'fill': me._option.fillColor},  100);
-      me._forceColored = false;
+      me._forceColor = '';
+      me._forceHoverColor = '';
     }
     else {
       me.path.animate({'fill': color}, 100);
-      me._forceColored = true;
+      me._forceColor = color;
+      me._forceHoverColor = hoverColor || color;
     }
     return me;
   };
