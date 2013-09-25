@@ -146,7 +146,7 @@ Example Code:
 
 `removeData(key)`，         删除在Area上绑定的数据。
 
-`setColor([color])`，       给区块加背景色（不传入color，则恢复默认的背景色）。通过这个方法设置的背景色不会被鼠标hover事件干掉。
+`setFillColor([color])`，   给区块加背景色（不传入color，则恢复默认的背景色）。通过这个方法设置的背景色不会被鼠标hover事件干掉。
 
 
 ## <a name="customize-map-data"></a>如果你想自定义地图数据:
