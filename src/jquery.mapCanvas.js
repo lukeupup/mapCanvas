@@ -63,7 +63,7 @@
         var canvasOffset = $container.offset(),
             evt = $.Event(eventName, {
               pageX  : e.pageX,
-              pageY  : e.pageY,
+              pageY  : e.pageY
             }),
             coordinate = {
               x: e.pageX - canvasOffset.left,
