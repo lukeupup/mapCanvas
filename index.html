@@ -8,6 +8,12 @@
     <meta name="keywords" content="SVG, Raphael, Raphaël, China Map, jQuery Plugin, 中国地图, html5, VML, canvas, 矢量地图" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <style>
+    .inner {width: 640px;}
+    </style>
+    <![endif]-->
     <style type="text/css">
     #map-ctnr {
       background: #FFF;
@@ -117,10 +123,10 @@
 
     <script type="text/javascript">
     $(function(){
-      var $code = $('#demo-code');
-      var script = document.createElement('script');
-      $(script).text($code.text());
-      $("body").append(script);
+      var code = $('#demo-code').text(),
+          script = document.createElement('script');
+      script.text = code;
+      document.body.appendChild(script);
     });
     </script>
   </body>
