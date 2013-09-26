@@ -217,7 +217,7 @@
   Area.prototype.setBubble = function(handler){
     var me = this;
     me._bubble = handler;
-  }
+  };
 
 
   var paintMap = function(data, canvas, option){

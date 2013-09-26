@@ -1,4 +1,4 @@
-/*! Map Canvas - v0.1.0 - 2013-09-24
+/*! Map Canvas - v0.1.0 - 2013-09-26
 * https://github.com/lukeupup/mapCanvas
 * Copyright (c) 2013 Luke; Licensed MIT */
 (function(window, $, Raphael, undefined){
@@ -29,9 +29,12 @@
         $container = $(canvas.canvas).parent();
 
     me._option = option;
-    me._forceColored = false;
+    me._forceColor = '';
+    me._forceHoverColor = '';
     me._eventHandlers = {};
     me._rawEventHandlers = {};
+    me._bubble = option.bubble;
+    me._$bubble = option.$bubble;
 
     me.name = pathData.name;
     me.path = null;
@@ -50,63 +53,99 @@
 
     me.path = canvas.path(cmdStr).attr(pathAttr);
 
-    // Draw text
-    box = me.path.getBBox();
+    if (option.showText) {
+      // Draw text
+      box = me.path.getBBox();
 
-    me.text = canvas.text(
-      box.x + (box.width / 2) + (pathData.offset ? pathData.offset.x * zoom : 0),
-      box.y + (box.height / 2) + (pathData.offset ? pathData.offset.y * zoom : 0),
-      me.name
-    ).attr(textAttr);
+      me.text = canvas.text(
+        box.x + (box.width / 2) + (pathData.offset ? pathData.offset.x * zoom : 0),
+        box.y + (box.height / 2) + (pathData.offset ? pathData.offset.y * zoom : 0),
+        me.name
+      ).attr(textAttr);
 
-    // Trigger events on path when event is fired on text.
-    $.each(syncMouseEvents, function(i, eventName){
-      $(me.text.node)[eventName](function(e){
-        var canvasOffset = $container.offset(),
-            evt = $.Event(eventName, {
-              pageX  : e.pageX,
-              pageY  : e.pageY,
-            }),
-            coordinate = {
-              x: e.pageX - canvasOffset.left,
-              y: e.pageY - canvasOffset.top
-            };
+      // Trigger events on path when event is fired on text.
+      $.each(syncMouseEvents, function(i, eventName){
+        $(me.text.node)[eventName](function(e){
+          var canvasOffset = $container.offset(),
+              evt = $.Event(eventName, {
+                pageX  : e.pageX,
+                pageY  : e.pageY
+              }),
+              coordinate = {
+                x: e.pageX - canvasOffset.left,
+                y: e.pageY - canvasOffset.top
+              };
 
-        /*
-        NOTE: Raphael.isPointInsidePath() have some bugs so that we can't use
-        it to determine if we should trigger mouse events of me.path.  
-        So before the bug is fixed, mouseenter (as well as mouseleave, etc.)
-        will be also triggered when we hover the text, even if the text is inside
-        the path.
-        If this bug is fixed, we can use the following code to avoid this issue.
-        
-        See bug detail at:
-        https://github.com/DmitryBaranovskiy/raphael/issues/539
+          /*
+          NOTE: Raphael.isPointInsidePath() have some bugs so that we can't use
+          it to determine if we should trigger mouse events of me.path.  
+          So before the bug is fixed, mouseenter (as well as mouseleave, etc.)
+          will be also triggered when we hover the text, even if the text is inside
+          the path.
+          If this bug is fixed, we can use the following code to avoid this issue.
+          
+          See bug detail at:
+          https://github.com/DmitryBaranovskiy/raphael/issues/539
 
-        // don't trigger mouseenter / mouseleave / mouseover / mouseout when the text is inside the path.
-        if (!Raphael.isPointInsidePath(cmdStr, coordinate.x, coordinate.y) ||
-          (eventName === 'click' || eventName === 'mousemove')
-        ) {
+          // don't trigger mouseenter / mouseleave / mouseover / mouseout when the text is inside the path.
+          if (!Raphael.isPointInsidePath(cmdStr, coordinate.x, coordinate.y) ||
+            (eventName === 'click' || eventName === 'mousemove')
+          ) {
+            $(me.path.node).trigger(evt);
+          }
+          */
           $(me.path.node).trigger(evt);
-        }
-        */
-        $(me.path.node).trigger(evt);
-        return false;
+          return false;
+
+        });
 
       });
 
-    });
+    }
+
 
     // Make the path color changed when mouse hovering.
-    me.on('mouseenter', function(){
-      if (!me._forceColored) {
-        me.path.animate({'fill': option.hoverFillColor}, 100);
-        me.text.animate({'fill': option.hoverTextColor}, 100);
+    me.on('mouseenter', function(e){
+      if (me._bubble) {
+        me._$bubble.html(me._bubble(me)).css({
+          top:  (e.pageY) + option.bubbleOffset.y,
+          left: (e.pageX) + option.bubbleOffset.x
+        }).show();
       }
-    }).on('mouseleave', function(){
-      if (!me._forceColored) {
+      if (!me._forceHoverColor) {
+        me.path.animate({'fill': option.hoverFillColor}, 100);
+        if (me.text) {
+          me.text.animate({'fill': option.hoverTextColor}, 100);
+        }
+      }
+      else {
+        me.path.animate({'fill': me._forceHoverColor}, 100);
+        if (me.text) {
+          me.text.animate({'fill': option.hoverTextColor}, 100);
+        }
+      }
+    }).on('mouseleave', function(e){
+      if (me._bubble) {
+        me._$bubble.hide().empty();
+      }
+      if (!me._forceColor) {
         me.path.animate({'fill': option.fillColor}, 100);
-        me.text.animate({'fill': option.textColor}, 100);
+        if (me.text) {
+          me.text.animate({'fill': option.textColor}, 100);
+        }
+      }
+      else {
+        me.path.animate({'fill': me._forceColor}, 100);
+        if (me.text) {
+          me.text.animate({'fill': option.textColor}, 100);
+        }
+      }
+    }).on('mousemove', function(e){
+      if (me._bubble) {
+        me._$bubble.css({
+          top:  (e.pageY) + me._option.bubbleOffset.y,
+          left: (e.pageX) + me._option.bubbleOffset.x
+        });
       }
     });
 
@@ -163,17 +202,24 @@
     return $path.removeData.apply($path, arguments);
   };
 
-  Area.prototype.setFillColor = function(color) {
+  Area.prototype.setFillColor = function(color, hoverColor) {
     var me = this;
     if (!color) {
       me.path.animate({'fill': me._option.fillColor},  100);
-      me._forceColored = false;
+      me._forceColor = '';
+      me._forceHoverColor = '';
     }
     else {
       me.path.animate({'fill': color}, 100);
-      me._forceColored = true;
+      me._forceColor = color;
+      me._forceHoverColor = hoverColor || color;
     }
     return me;
+  };
+
+  Area.prototype.setBubble = function(handler){
+    var me = this;
+    me._bubble = handler;
   };
 
 
@@ -185,29 +231,6 @@
     });
     return areas;
   };
-
-  var bindBubble = function(areas, option){
-    var $bubble = $('<div class="J_MapBubble"></div>').appendTo('body')
-      .hide().css(option.bubbleStyle);
-
-    $.each(areas, function(i, area){
-      area.on('mouseenter', function(e){
-        $bubble.html(option.bubble(area)).css({
-          top:  (e.pageY) + option.bubbleOffset.y,
-          left: (e.pageX) + option.bubbleOffset.x
-        }).show();
-      }).on('mousemove', function(e){
-        $bubble.css({
-          top:  (e.pageY) + option.bubbleOffset.y,
-          left: (e.pageX) + option.bubbleOffset.x
-        });
-      }).on('mouseleave', function(e){
-        $bubble.hide().empty();
-      });
-    });
-
-  };
-
 
   $.fn.mapCanvas = function(data, option){
     var $this = $(this);
@@ -221,38 +244,40 @@
       throw 'The first argument should be an object, or exactly "areas".';
     }
     option = $.extend(true, {
-      width:          undefined,
-      height:         undefined,
-      zoom:           1,
-      strokeColor:    '#AAA',
-      strokeWidth:    1,
-      strokeLinejoin: 'round',
-      fillColor:      '#EEE',
-      textColor:      '#555',
-      hoverFillColor: '#FAA',
-      hoverTextColor: '#555',
-      fontSize:       '12px',
-      fontFamily:     'arial, sans-serif',
-      cursor:         'pointer',
-      bubble: function(area){
+      width          : undefined,
+      height         : undefined,
+      zoom           : 1,
+      showText       : true,
+      strokeColor    : '#AAA',
+      strokeWidth    : 1,
+      strokeLinejoin : 'round',
+      fillColor      : '#EEE',
+      textColor      : '#555',
+      hoverFillColor : '#FAA',
+      hoverTextColor : '#555',
+      fontSize       : '12px',
+      fontFamily     : 'arial, sans-serif',
+      cursor         : 'pointer',
+      bubbleClass    : 'J_MapBubble',
+      bubble         : function(area){
         return area.name;
       },
-      bubbleOffset: {
+      bubbleOffset   : {
         x: 10,
         y: 10
       },
-      bubbleStyle: {
+      bubbleStyle    : {
         background:   '#333',
         color:        '#FFF',
         borderRadius: '3px',
         padding:      '5px 10px'
       },
 
-      onMapInit:        $.noop,
-      onAreaClick:      $.noop,
-      onAreaMouseenter: $.noop,
-      onAreaMouseleave: $.noop,
-      onAreaMousemove:  $.noop
+      onMapInit        : $.noop,
+      onAreaClick      : $.noop,
+      onAreaMouseenter : $.noop,
+      onAreaMouseleave : $.noop,
+      onAreaMousemove  : $.noop
     }, option);
 
     if (option.width) { // if width is defined, ignore zoom
@@ -268,6 +293,7 @@
       option.height = option.zoom * data.dimension.height;
     }
 
+
     $.extend(option.bubbleStyle, {
       position: 'absolute',
       zIndex:   '2000',
@@ -279,11 +305,12 @@
     $this.each(function(i, elem){
       var $elem = $(elem).width(option.width).height(option.height).empty(),
           canvas = Raphael(elem, option.width, option.height),
-          map = paintMap(data, canvas, option);
+          map;
 
-      if (option.bubble) {
-        bindBubble(map, option);
-      }
+      option.$bubble = $('<div></div>').attr('class', option.bubbleClass)
+        .appendTo('body').hide().css(option.bubbleStyle);
+
+      map = paintMap(data, canvas, option);
 
       $.each(map, function(i, area){
         area.on('click',      option.onAreaClick);
