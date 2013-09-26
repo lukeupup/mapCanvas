@@ -13,7 +13,8 @@
   $.getJSON('src/chinamap.json', function(data){
     $('.map').mapCanvas(data, {
       zoom: 1.5,
-      fontFamily: '"Microsoft YaHei"'
+      fontFamily: '"Microsoft YaHei"',
+      showText: false
     });
 
     var colors = {

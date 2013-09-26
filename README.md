@@ -1,13 +1,25 @@
 mapCanvas
 =========
 
-SVG China map based on Raphaël and jQuery (also support other countries)
-
 基于jQuery和Raphaël的中国地图（亦可支持其他国家）
 
 # Demo
 
 [View on http://lukeupup.github.io/mapCanvas/](http://lukeupup.github.io/mapCanvas/)
+
+# 特性
+
+- 自定义地图宽高
+- 绑定鼠标交互事件
+- 在地图上显示地名
+- 自定义区块颜色
+- 显示气泡提示
+
+# 兼容性
+
+兼容IE 7+，Chrome，Firefox等现代浏览器。理论上IE 6也兼容，但没有经过测试。
+
+IE 8以下的版本，鼠标指向文字时，可能会有闪烁。
 
 # Usage
 
@@ -50,6 +62,8 @@ Example Code:
 `height`          默认为`undefined`，规定了画布的宽度。
 
 `zoom`            默认为`1`，        规定了画布相对于原始的dimension的缩放比例。
+
+`showText`        默认为`true`，     规定了地图上是否显示区块名。当showText为`false`时，Area对象的`text`属性为`null`。
 
 `strokeColor`     默认为`'#AAA'`，   规定了区块边界的颜色。
 
@@ -134,7 +148,7 @@ Example Code:
 
 `path` 是一个[Raphael Element](http://raphaeljs.com/reference.html#Element)对象，代表区块的形状路径元素。
 
-`text` 是一个[Raphael Element](http://raphaeljs.com/reference.html#Element)对象，代表区块的名称元素。
+`text` 是一个[Raphael Element](http://raphaeljs.com/reference.html#Element)对象，代表区块的名称元素。当选择不显示名称时，这个属性为`null`。
 
 ### Area对象的方法
 
@@ -150,6 +164,7 @@ Example Code:
 如果传入两个参数，第二个参数规定了区块被鼠标hover时的颜色。
 通过这个方法设置的背景色不会被鼠标hover事件干掉。
 
+`setBubble`，               定义鼠标指向Area时气泡中显示的内容。接收Area对象作为参数，返回一个字符串作为bubble的html内容。
 
 ## <a name="customize-map-data"></a>如果你想自定义地图数据:
 
