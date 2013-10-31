@@ -1,4 +1,4 @@
-/*! Map Canvas - v0.1.0 - 2013-09-26
+/*! Map Canvas - v0.1.2 - 2013-10-31
 * https://github.com/lukeupup/mapCanvas
 * Copyright (c) 2013 Luke; Licensed MIT */
 (function(window, $, Raphael, undefined){
